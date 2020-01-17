@@ -1,7 +1,9 @@
+/* eslint-disable import/named */
 import axios from 'axios';
 
 import Dev from '../models/Dev';
 import parseStringAsArray from '../utils/parseStringAsArray';
+import { findConnections, sendMessage } from '../websocket';
 
 class DevController {
   async index(req, res) {
@@ -38,6 +40,13 @@ class DevController {
         techs: techsArray,
         location,
       });
+
+      const sendSocketMessageTo = findConnections(
+        { latitude, longitude },
+        techsArray
+      );
+
+      sendMessage(sendSocketMessageTo, 'new-dev', dev);
     }
 
     return res.json(dev);
